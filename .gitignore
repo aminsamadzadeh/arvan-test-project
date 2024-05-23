@@ -1,0 +1,14 @@
+__pycache__/
+[Bb]in
+[Ii]nclude
+[Ll]ib
+[Ll]ib64
+[Ll]ocal
+[Ss]cripts
+[Ll]ogs
+pyvenv.cfg
+.venv
+pip-selfcheck.json
+*.session
+.env
+*.egg-info
