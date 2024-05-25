@@ -2,18 +2,18 @@ from flask import request
 
 import app.rateLimiter2.helpers.datetime as datetimeHelper
 import app.rateLimiter2.helpers.pipeline as pipelineHelper
-from app.rateLimiter2.DuplicatedRateLimiter import DuplicatedRateLimiter
-from app.rateLimiter2.MinuteRateLimiter import MinuteRateLimiter
-from app.rateLimiter2.MonthRateLimiter import MonthRateLimiter
-from app.rateLimiter2.Pipeline import Pipeline
+from app.rateLimiter2.duplicatedRateLimiter import DuplicatedRateLimiter
+from app.rateLimiter2.minuteRateLimiter import MinuteRateLimiter
+from app.rateLimiter2.monthRateLimiter import MonthRateLimiter
+from app.rateLimiter2.pipeline import Pipeline
 
 from app.redisConnection import *
-from app.rateLimiter2.Quotas import *
+from app.rateLimiter2.quotas import *
 
 class RateLimiter():
 	def __init__ (self):
 		self.request_body = request.get_json()
-		self.quotas = Quotas(self.userId())
+		self.quotas = Quotas(self.user_id())
 		self.pipeline = Pipeline()
 		self.limiters = [
 			DuplicatedRateLimiter(self.quotas, self.pipeline),
@@ -21,18 +21,18 @@ class RateLimiter():
 			MonthRateLimiter(self.quotas, self.pipeline)
 		]
 
-	def userId(self):
+	def user_id(self):
 		return self.request_body.get('user_id')
 
 	def execute(self):
 		for limiter in self.limiters:
-			limiter.addCommands()
+			limiter.add_commands()
 		self.pipeline.execute()
 
-	def isLimit(self):
+	def is_limit(self):
 		for limiter in self.limiters:
-			if limiter.isLimit():
-				return True, limiter.statusCode()
+			if limiter.is_limit():
+				return True, limiter.status_code()
 		return False, None
 
 	

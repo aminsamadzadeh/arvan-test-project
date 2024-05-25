@@ -1,21 +1,21 @@
 from flask import request
-from app.rateLimiter2.Quotas import *
+from app.rateLimiter2.quotas import *
 
 class RateLimiterHandler():
 	def __init__ (self, quotas, pipeline):
 		self.request_body = request.get_json()
 		self.quotas = quotas
 		self.pipeline = pipeline
-		self.keyList = {}
+		self.key_list = {}
 
-	def userId(self):
+	def user_id(self):
 		return self.request_body.get('user_id')
 
-	def requestId(self):
+	def request_id(self):
 		return self.request_body.get('request_id')
 
-	def statusCode(self):
+	def status_code(self):
 		pass
 
-	def addCommands(self):
+	def add_commands(self):
 		pass

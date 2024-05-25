@@ -2,25 +2,25 @@ from flask import request
 
 import app.rateLimiter.helpers.datetime as datetimeHelper
 import app.rateLimiter.helpers.pipeline as pipelineHelper
-from app.rateLimiter.MinuteRateLimiter import MinuteRateLimiter
-from app.rateLimiter.MonthRateLimiter import MonthRateLimiter
+from app.rateLimiter.minuteRateLimiter import MinuteRateLimiter
+from app.rateLimiter.monthRateLimiter import MonthRateLimiter
 
 from app.redisConnection import *
-from app.rateLimiter.Quotas import *
+from app.rateLimiter.quotas import Quotas
 
 class RateLimiter():
 	def __init__ (self):
 		self.request_body = request.get_json()
-		self.quotas = Quotas(self.userId())
+		self.quotas = Quotas(self.user_id())
 		self.limiters = [
 			MinuteRateLimiter(self.quotas),
 			MonthRateLimiter(self.quotas)
 		]
 
-	def userId(self):
+	def user_id(self):
 		return self.request_body.get('user_id')
 
-	def requestId(self):
+	def request_id(self):
 		return self.request_body.get('request_id')
 
 	def increment(self):
@@ -29,17 +29,17 @@ class RateLimiter():
 			limiter.increment(p)
 		p.execute()
 
-	def isLimit(self):
+	def is_limit(self):
 		for limiter in self.limiters:
-			if limiter.isLimit():
+			if limiter.is_limit():
 				return True
 		return False
 
-	def getReqHash(self):
-		return f'requests:{self.requestId()}:{self.userId()}'
+	def get_req_hash(self):
+		return f'requests:{self.request_id()}:{self.user_id()}'
 
-	def addToRequests(self):
-		redisConnection.bf().add('requests', self.getReqHash())
+	def add_to_requests(self):
+		redisConnection.bf().add('requests', self.get_req_hash())
 
-	def isDuplicated(self):
-		return redisConnection.bf().exists('requests', self.getReqHash())
+	def is_duplicated(self):
+		return redisConnection.bf().exists('requests', self.get_req_hash())

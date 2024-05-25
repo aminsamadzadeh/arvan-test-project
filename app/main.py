@@ -1,8 +1,8 @@
 from flask import Flask, jsonify, request
 from app.env import *
 from app.redisConnection import *
-from app.rateLimiter.RateLimiter import *
-from app.rateLimiter2.RateLimiter import RateLimiter as RateLimiter2
+from app.rateLimiter.rateLimiter import RateLimiter
+from app.rateLimiter2.rateLimiter import RateLimiter as RateLimiter2
 
 if not redisConnection.exists('requests'):
 	redisConnection.bf().create('requests', 0.01, 1000)
@@ -14,12 +14,12 @@ app = Flask(__name__)
 # 	print('before_request')
 # 	rt = RateLimiter()
 
-# 	if rt.isDuplicated():
+# 	if rt.is_duplicated():
 # 		return jsonify({'status': False}), 400
 
-# 	rt.addToRequests()
+# 	rt.add_to_requests()
 
-# 	if rt.isLimit():
+# 	if rt.is_limit():
 # 		return jsonify({'status': False}), 429
 
 # 	rt.increment()
@@ -31,9 +31,9 @@ def before2():
 
 	rt.execute()
 
-	limit, statusCode = rt.isLimit()
+	limit, status_code = rt.is_limit()
 	if limit:
-		return jsonify({'status': False}), statusCode
+		return jsonify({'status': False}), status_code
 
 @app.post('/sample')
 def sample():

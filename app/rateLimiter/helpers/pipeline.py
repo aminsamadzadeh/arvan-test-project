@@ -1,6 +1,6 @@
 from app.redisConnection import *
 
-def pipelineIsNotNone(func): 
+def pipeline_is_not_none(func): 
 	def wrap(*args, **kwargs): 
 		has_pipeline = 'pipeline' in kwargs or len(args) > 1
 		if has_pipeline:

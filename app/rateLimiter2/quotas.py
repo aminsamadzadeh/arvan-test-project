@@ -6,19 +6,19 @@ class Quotas():
 		self.user_id = user_id
 		self.quotas = self.get()
 
-	def getQuotaHash(self):
+	def get_quota_hash(self):
 		return f'quotas:{self.user_id}'
 
 	def get(self):
-		return redisConnection.hmget(self.getQuotaHash(), ['month', 'minute'])
+		return redisConnection.hmget(self.get_quota_hash(), ['month', 'minute'])
 
-	def getMonth(self):
+	def get_month(self):
 		month = self.quotas[0]
 		if not month:
 			return int(env('QUOTAS_MONTH'))
 		return int(month)
 
-	def getMinute(self):
+	def get_minute(self):
 		minute = self.quotas[1]
 		if not minute:
 			return int(env('QUOTAS_MINUTE'))
